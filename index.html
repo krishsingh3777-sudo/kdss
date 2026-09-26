@@ -3,482 +3,762 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CogniLab — Online Behavioral Experiment Platform</title>
+<title>IIITS Lab — Behavioral Experiment Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f7f8fb; --card:#ffffff; --text:#14161c; --muted:#6b7280;
-  --accent:#3452e1; --accent2:#7c3aed; --border:#e2e5ec; --danger:#d33;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#12161a; --surface:#1a2027; --surface2:#222a32; --border:#2c3540;
+  --text:#e7edf2; --muted:#8b98a4; --accent:#57e6c8; --accent-dim:#2f6e63;
+  --warn:#f2b134; --danger:#f2707a; --good:#7fe08a;
+  --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#12131a; --card:#1b1d27; --text:#eceef4; --muted:#9aa0b0;
-    --accent:#7c93ff; --accent2:#b28dff; --border:#2b2e3a;
+:root:not([data-theme="light"]){ }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f4f6f8; --surface:#ffffff; --surface2:#eef1f4; --border:#dce2e7;
+    --text:#161b20; --muted:#5b6874; --accent-dim:#bff0e5;
   }
 }
-:root[data-theme="dark"]{
-  --bg:#12131a; --card:#1b1d27; --text:#eceef4; --muted:#9aa0b0;
-  --accent:#7c93ff; --accent2:#b28dff; --border:#2b2e3a;
-}
-html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
-*{box-sizing:border-box;}
-body{height:100%;margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
-.wrap{max-width:960px;margin:0 auto;padding:16px 16px 40px;}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0 18px;}
-.brand{font-size:19px;font-weight:800;}
-.navbtns{display:flex;gap:8px;}
-h2{font-size:26px;margin:0 0 8px;}
-.sub{color:var(--muted);font-size:13px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-input[type=text],input[type=number],input[type=password],select,textarea{
-  background:var(--bg);border:1px solid var(--border);color:var(--text);
-  border-radius:8px;padding:8px 10px;font-size:14px;width:100%;
-}
-textarea{min-height:60px;font-family:inherit;resize:vertical;}
-label{font-size:12px;color:var(--muted);display:block;margin-bottom:3px;}
-.field{flex:1;min-width:140px;margin-bottom:8px;}
-button{cursor:pointer;border:none;border-radius:8px;padding:9px 14px;font-size:14px;font-weight:600;}
-.btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
-.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--border);}
-.btn-sm{padding:5px 9px;font-size:12px;font-weight:500;}
-.step{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
-.step-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
-  padding:2px 8px;border-radius:999px;background:var(--accent);color:#fff;}
-.badge.stimulus{background:var(--accent2);}
-.badge.response{background:#e08a2a;}
-.badge.wait{background:#6b7280;}
-.addbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-.runner{position:fixed;inset:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;text-align:center;padding:24px;z-index:50;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
-.runner .stim{font-size:34px;max-width:80%;}
-.runner .hint{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));font-size:13px;color:#aaa;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-th,td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;}
-.empty{color:var(--muted);font-size:13px;padding:10px 0;}
-.hero{padding:20px 4px 20px;text-align:center;}
-.hero p{color:var(--muted);font-size:15px;max-width:540px;margin:0 auto 18px;}
-.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-  color:var(--accent);background:rgba(52,82,225,.12);padding:4px 10px;border-radius:999px;margin-bottom:12px;}
-.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0;}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0;}
-.feat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:left;}
-.feat h3{font-size:14px;margin:8px 0 4px;}
-.feat p{font-size:12.5px;color:var(--muted);margin:0;}
-.expcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:left;}
-.expcard h3{margin:6px 0 6px;font-size:16px;}
-.expcard p{font-size:13px;color:var(--muted);margin:0 0 12px;min-height:52px;}
-.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);}
-.subtabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:14px;}
-.subtab{padding:8px 12px;border:none;background:none;color:var(--muted);font-size:13px;cursor:pointer;border-bottom:2px solid transparent;}
-.subtab.active{color:var(--accent);border-color:var(--accent);font-weight:600;}
-.consent-text{max-height:220px;overflow-y:auto;font-size:13px;color:var(--muted);border:1px solid var(--border);
-  border-radius:8px;padding:12px;margin-bottom:14px;text-align:left;}
-.consent-text p{margin:0 0 10px;}
-.check-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;text-align:left;font-size:13px;}
-.check-row input{width:auto;margin-top:2px;}
-.screen{display:none;}
-.screen.active{display:block;}
+:root[data-theme="dark"]{}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+.mono{font-family:var(--mono)}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+.view{display:none;min-height:100%}
+.view.active{display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.topbar{position:sticky;top:0;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.topbar-in{max-width:1080px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.navlinks{display:flex;gap:8px;align-items:center}
+.pill{border:1px solid var(--border);background:var(--surface);color:var(--muted);padding:7px 14px;border-radius:99px;font-size:13px}
+.btn{border:1px solid var(--border);background:var(--surface2);color:var(--text);padding:10px 18px;border-radius:8px;font-size:14px;font-weight:500;transition:border-color .15s,transform .1s}
+.btn:hover{border-color:var(--accent)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#05201c;border-color:var(--accent);font-weight:600}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:transparent}
+.btn-danger{color:var(--danger);border-color:var(--danger)}
+.btn-sm{padding:6px 12px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* HOME */
+.hero{padding:88px 0 56px;border-bottom:1px solid var(--border)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr}}
+h1{font-size:44px;line-height:1.08;margin:0 0 18px;letter-spacing:-.02em;max-width:15ch}
+.lede{color:var(--muted);font-size:17px;max-width:46ch;margin:0 0 30px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.readout{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px}
+.readout-label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.readout-num{font-family:var(--mono);font-size:52px;font-weight:700;color:var(--accent)}
+.readout-sub{color:var(--muted);font-size:13px;margin-top:6px}
+.tickbar{display:flex;gap:3px;margin-top:18px;height:28px;align-items:flex-end}
+.tick{flex:1;background:var(--surface2);border-top:2px solid var(--accent-dim)}
+
+.section{padding:56px 0;border-bottom:1px solid var(--border)}
+.section h2{font-size:26px;letter-spacing:-.01em;margin:0 0 8px}
+.section .lede{margin-bottom:36px;font-size:15px}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:820px){.feat-grid{grid-template-columns:1fr}}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.feat-num{font-family:var(--mono);color:var(--accent);font-size:13px;margin-bottom:14px}
+.feat h3{margin:0 0 8px;font-size:17px}
+.feat p{margin:0;color:var(--muted);font-size:14px}
+
+.game-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+@media(max-width:820px){.game-grid{grid-template-columns:1fr}}
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px}
+.game-card .icon{font-size:26px;margin-bottom:10px;display:block}
+.game-card h4{margin:0 0 6px;font-size:15px}
+.game-card p{margin:0;color:var(--muted);font-size:13.5px}
+
+footer{padding:28px 0;color:var(--muted);font-size:13px;text-align:center}
+
+/* LOGIN */
+.center-wrap{min-height:100vh;min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.login-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px}
+.login-card h2{margin:0 0 6px;font-size:22px}
+.login-card p.lede{margin:0 0 24px;font-size:14px}
+.role-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.role-btn{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:18px 10px;text-align:center;color:var(--text)}
+.role-btn.sel{border-color:var(--accent);background:var(--accent-dim)}
+.role-btn .icon{font-size:22px;display:block;margin-bottom:6px}
+.role-btn .lbl{font-size:14px;font-weight:600}
+.avail-item{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;text-align:left;width:100%;color:var(--text)}
+.avail-item:hover{border-color:var(--accent)}
+.avail-icon{font-size:20px}
+.avail-body{flex:1;min-width:0}
+.avail-title{font-weight:600;font-size:14px}
+.avail-sub{color:var(--muted);font-size:12px;margin-top:1px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.field{width:100%;padding:11px 13px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;margin-bottom:16px}
+.field:focus{outline:none;border-color:var(--accent)}
+.back-link{background:none;border:none;color:var(--muted);font-size:13px;margin-bottom:18px;padding:0}
+
+/* RESEARCHER */
+.console{display:grid;grid-template-columns:210px 1fr;min-height:100%}
+@media(max-width:760px){.console{grid-template-columns:1fr;}}
+.rail{border-right:1px solid var(--border);padding:24px 14px;background:var(--surface)}
+@media(max-width:760px){.rail{border-right:none;border-bottom:1px solid var(--border);display:flex;gap:8px;overflow-x:auto;padding:14px}}
+.rail-item{display:block;width:100%;text-align:left;background:none;border:none;color:var(--muted);padding:10px 12px;border-radius:8px;font-size:14px;margin-bottom:2px;white-space:nowrap}
+.rail-item.active{background:var(--surface2);color:var(--accent)}
+.pane{padding:28px 32px}
+.pane-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.pane-head h2{margin:0;font-size:20px}
+.blocks-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.block{border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:14px 18px;cursor:grab;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500}
+.block:active{cursor:grabbing}
+.block.sel{border-color:var(--accent);background:var(--accent-dim)}
+.dropzone{border:2px dashed var(--border);border-radius:14px;padding:34px 20px;text-align:center;color:var(--muted);font-size:14px;margin-bottom:26px;transition:border-color .15s,background .15s}
+.dropzone.over{border-color:var(--accent);background:var(--accent-dim)}
+.exp-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
+.exp-type{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface2);padding:4px 9px;border-radius:6px}
+.exp-title-in{background:none;border:none;color:var(--text);font-size:15px;font-weight:600;flex:1;min-width:140px}
+.exp-title-in:focus{outline:none}
+.empty{color:var(--muted);font-size:14px;padding:20px 0}
+select.field{margin-bottom:22px;max-width:340px}
+.stat-row{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;min-width:130px}
+.stat .v{font-family:var(--mono);font-size:24px;color:var(--accent);font-weight:700}
+.stat .l{color:var(--muted);font-size:12px;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.bars{display:flex;align-items:flex-end;gap:6px;height:110px;margin:18px 0 8px;padding:0 2px}
+.bar{flex:1;background:var(--accent-dim);border-top:2px solid var(--accent);border-radius:3px 3px 0 0;min-height:3px;position:relative}
+.bar .tip{position:absolute;top:-18px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+/* PARTICIPANT / GAME */
+.play-shell{min-height:100%;display:flex;flex-direction:column}
+.play-top{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.play-body{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 20px}
+.stage{width:100%;max-width:460px;text-align:center}
+.instr{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.6}
+.circle-zone{width:220px;height:220px;border-radius:50%;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--muted);background:var(--surface2);border:2px solid var(--border);transition:background .08s}
+.circle-zone.go{background:var(--good);color:#062b0a;border-color:var(--good)}
+.circle-zone.wait{background:var(--surface2)}
+.big-num{font-family:var(--mono);font-weight:700;font-size:64px;letter-spacing:.03em;margin:30px 0}
+.trial-tag{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:10px}
+.result-line{font-family:var(--mono);font-size:14px;color:var(--accent);margin-top:14px;min-height:20px}
+.words-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.word-chip{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px;font-size:17px;font-weight:600}
+.opt-btn{display:block;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;font-size:16px;color:var(--text);margin-bottom:10px}
+.opt-btn:hover{border-color:var(--accent)}
+.opt-btn.correct{border-color:var(--good);background:color-mix(in srgb, var(--good) 15%, var(--surface2))}
+.opt-btn.wrong{border-color:var(--danger);background:color-mix(in srgb, var(--danger) 15%, var(--surface2))}
+.summary-grid{display:flex;gap:16px;justify-content:center;margin:22px 0;flex-wrap:wrap}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 22px}
+.summary-card .v{font-family:var(--mono);font-size:26px;color:var(--accent);font-weight:700}
+.summary-card .l{color:var(--muted);font-size:12px;margin-top:2px}
+.note{color:var(--muted);font-size:12px;margin-top:20px}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="topbar">
-    <div class="brand">🧠 CogniLab</div>
-    <div class="navbtns" id="navbtns">
-      <button class="btn-ghost btn-sm" onclick="showScreen('researcherLogin')">Researcher Login</button>
-      <button class="btn-primary btn-sm" onclick="showScreen('consent')">Take the Study</button>
+<!-- HOME -->
+<section id="view-home" class="view active">
+  <div class="topbar"><div class="topbar-in">
+    <div class="brand"><span class="brand-dot"></span>IIITS Lab</div>
+    <div class="navlinks"><button class="btn btn-primary btn-sm" onclick="go('login')">Log in</button></div>
+  </div></div>
+
+  <div class="hero"><div class="wrap hero-grid">
+    <div>
+      <h1>Run behavioral experiments without writing a line of code.</h1>
+      <p class="lede">IIITS Lab is a lightweight lab for cognitive-timing research. Build reaction-time, perception, and memory tasks by dragging blocks onto a canvas, then watch millisecond-precise results roll in from anonymous participants.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="go('login');selectRole('researcher')">I'm a researcher</button>
+        <button class="btn" onclick="go('login');selectRole('participant')">I'm a participant</button>
+      </div>
     </div>
+    <div class="readout">
+      <div class="readout-label">Sample reading — reaction time</div>
+      <div class="readout-num" id="homeTimer">238<span style="font-size:22px;color:var(--muted)"> ms</span></div>
+      <div class="readout-sub">Captured with the high-precision timing engine (performance.now)</div>
+      <div class="tickbar" id="homeTicks"></div>
+    </div>
+  </div></div>
+
+  <div class="section"><div class="wrap">
+    <h2>Built for precision, not paperwork</h2>
+    <p class="lede">Three things this platform gets right, so you don't have to build them yourself.</p>
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-num">TIMING</div><h3>High-precision timing engine</h3><p>Every stimulus and response is timestamped with sub-millisecond browser timers, not wall-clock guesses — so reaction-time data is actually comparable across trials.</p></div>
+      <div class="feat"><div class="feat-num">BUILDER</div><h3>Visual experiment builder</h3><p>Drag a task block onto the canvas and it becomes a live, playable experiment instantly — participants see it appear in their list right away.</p></div>
+      <div class="feat"><div class="feat-num">PRIVACY</div><h3>Secure &amp; anonymous data</h3><p>Participants join with a randomly generated ID — never a name or email — and results are scoped to your experiment only, keeping raw data anonymous by default.</p></div>
+    </div>
+  </div></div>
+
+  <div class="section"><div class="wrap">
+    <h2>Four ready-made tasks</h2>
+    <p class="lede">Drop any of these onto the builder canvas to spin up a new study.</p>
+    <div class="game-grid">
+      <div class="game-card"><span class="icon">🎯</span><h4>Reaction time</h4><p>A circle turns from grey to green at a random interval — participants press space the instant it does.</p></div>
+      <div class="game-card"><span class="icon">🔢</span><h4>Visual number test</h4><p>A number flashes on screen; participants type it back as fast and accurately as they can.</p></div>
+      <div class="game-card"><span class="icon">🧠</span><h4>Memory test</h4><p>Four words appear briefly, then vanish — participants pick which one they actually saw from a mixed set.</p></div>
+      <div class="game-card"><span class="icon">🧮</span><h4>Aptitude test</h4><p>A 60-second sprint of addition, subtraction, multiplication and division — questions keep coming until time runs out.</p></div>
+    </div>
+  </div></div>
+
+  <footer>IIITS Lab — a prototype experiment platform. Demo data is stored locally in your browser.</footer>
+</section>
+
+<!-- LOGIN -->
+<section id="view-login" class="view">
+  <div class="center-wrap"><div class="login-card">
+    <button class="back-link" onclick="go('home')">&larr; Back</button>
+    <h2>Welcome to IIITS Lab</h2>
+    <p class="lede">Choose how you're joining today.</p>
+    <div class="role-row">
+      <button class="role-btn" id="roleResearcherBtn" onclick="selectRole('researcher')"><span class="icon">🔬</span><span class="lbl">Researcher</span></button>
+      <button class="role-btn" id="roleParticipantBtn" onclick="selectRole('participant')"><span class="icon">🙂</span><span class="lbl">Participant</span></button>
+    </div>
+    <div id="researcherLoginFields" style="display:none">
+      <label>Username</label>
+      <input class="field" id="researcherName" placeholder="e.g. Dr. Rao" maxlength="40">
+      <label>Lab ID</label>
+      <input class="field mono" id="researcherLabId" placeholder="e.g. IIITS-LAB-1" maxlength="20">
+      <button class="btn btn-primary" style="width:100%" onclick="loginResearcher()">Enter console</button>
+      <div class="note" id="researcherLoginError" style="color:var(--danger)"></div>
+    </div>
+    <div id="participantLoginFields" style="display:none">
+      <p class="lede" style="margin-bottom:14px">No account needed — you'll get a random anonymous ID.</p>
+      <label>Continent</label>
+      <select class="field" id="participantContinent">
+        <option value="">Select continent…</option>
+        <option value="Asia">Asia</option>
+        <option value="Europe">Europe</option>
+        <option value="North America">North America</option>
+        <option value="South America">South America</option>
+        <option value="Australia">Australia</option>
+        <option value="Africa">Africa</option>
+        <option value="Antarctica">Antarctica</option>
+      </select>
+      <label>Age group</label>
+      <select class="field" id="participantAgeGroup">
+        <option value="">Select age group…</option>
+        <option value="5-10">5 to 10</option>
+        <option value="11-18">11 to 18</option>
+        <option value="19-35">19 to 35</option>
+        <option value="36-60">35 to 60</option>
+        <option value="61-90">61 to 90</option>
+      </select>
+      <button class="btn btn-primary" style="width:100%" onclick="loginParticipant()">Continue anonymously</button>
+      <div class="note" id="participantLoginError" style="color:var(--danger)"></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- RESEARCHER CONSOLE -->
+<section id="view-researcher" class="view">
+  <div class="topbar"><div class="topbar-in">
+    <div class="brand"><span class="brand-dot"></span>IIITS Lab</div>
+    <div class="navlinks"><span class="pill" id="researcherNameTag"></span><button class="btn btn-sm" onclick="logout()">Log out</button></div>
+  </div></div>
+  <div class="console">
+    <div class="rail">
+      <button class="rail-item active" data-tab="builder" onclick="setResearcherTab('builder')">🧩 Builder</button>
+      <button class="rail-item" data-tab="results" onclick="setResearcherTab('results')">📊 Results</button>
+    </div>
+    <div class="pane" id="researcherPane"></div>
   </div>
+</section>
 
-  <!-- LANDING -->
-  <div id="landing" class="screen active">
-    <div class="hero">
-      <span class="pill">Web Development Track — BNB Round 1</span>
-      <h2>Millisecond-accurate experiments.<br>Zero lines of code.</h2>
-      <p>CogniLab lets researchers visually build behavioral experiments and run them in any browser — with the timing precision reaction-time studies actually need. Testers can take part in three ready-made studies right now.</p>
-    </div>
-    <div class="grid4">
-      <div class="feat"><h3>🧩 No-code trial builder</h3><p>Instruction, stimulus, response and wait blocks — reorder and configure without writing a line of JavaScript.</p></div>
-      <div class="feat"><h3>⏱️ High-precision timing</h3><p>Stimulus onset and reaction time captured via the browser's high-resolution clock.</p></div>
-      <div class="feat"><h3>🔒 Anonymous by design</h3><p>No personal data collected — just anonymized trial-by-trial responses.</p></div>
-      <div class="feat"><h3>📤 Instant export</h3><p>Every run produces a clean CSV of trial, response and reaction time.</p></div>
-    </div>
-    <div class="foot">CogniLab · a small-scale prototype for the BNB Round 1 hackathon</div>
+<!-- PARTICIPANT JOIN -->
+<section id="view-join" class="view">
+  <div class="center-wrap"><div class="login-card" style="max-width:480px">
+    <button class="back-link" onclick="go('login')">&larr; Back</button>
+    <h2>Join an experiment</h2>
+    <p class="lede">Your ID: <span class="mono" id="pidTag"></span> — pick a study to begin.</p>
+    <div id="availableExpList"></div>
+  </div></div>
+</section>
+
+<!-- GAME / PLAY -->
+<section id="view-play" class="view">
+  <div class="play-shell">
+    <div class="play-top"><div class="brand"><span class="brand-dot"></span>IIITS Lab</div><span class="pill" id="playExpTag"></span></div>
+    <div class="play-body"><div class="stage" id="stage"></div></div>
   </div>
-
-  <!-- RESEARCHER LOGIN -->
-  <div id="researcherLogin" class="screen">
-    <button class="btn-ghost btn-sm" onclick="showScreen('landing')">← Back</button>
-    <div class="card" style="max-width:360px;margin:24px auto 0">
-      <h2 style="font-size:18px">Researcher Login</h2>
-      <div class="sub" style="margin-bottom:14px">Demo login — any name and access code works.</div>
-      <div class="field"><label>Name</label><input type="text" id="rName" placeholder="Dr. Ada Lovelace"></div>
-      <div class="field"><label>Access code</label><input type="password" id="rCode" placeholder="••••••••"></div>
-      <button class="btn-primary" onclick="researcherLogin()" style="width:100%">Enter dashboard →</button>
-    </div>
-  </div>
-
-  <!-- RESEARCHER DASHBOARD -->
-  <div id="researcherDash" class="screen">
-    <div class="topbar" style="padding-top:0">
-      <div class="sub">Signed in as <b id="rNameShow"></b></div>
-      <button class="btn-ghost btn-sm" onclick="showScreen('landing')">Log out</button>
-    </div>
-    <div class="subtabs">
-      <button class="subtab active" data-sub="build">My Experiments</button>
-      <button class="subtab" data-sub="preview">Preview &amp; Run</button>
-      <button class="subtab" data-sub="data">Response Data</button>
-    </div>
-
-    <div id="sub-build" class="subview">
-      <div class="card">
-        <div class="row">
-          <div class="field"><label>Experiment name</label><input type="text" id="expName" placeholder="e.g. Stroop Task Pilot"></div>
-          <button class="btn-primary" onclick="saveExperiment()">Save</button>
-        </div>
-        <div class="row" style="margin-top:4px">
-          <div class="field"><label>Load saved experiment</label><select id="loadSelect" onchange="loadExperiment(this.value)"><option value="">— select —</option></select></div>
-          <button class="btn-danger" onclick="deleteExperiment()">Delete</button>
-        </div>
-      </div>
-      <div id="stepsList"></div>
-      <div class="addbar">
-        <button class="btn-ghost" onclick="addStep('instruction')">+ Instruction</button>
-        <button class="btn-ghost" onclick="addStep('stimulus')">+ Stimulus</button>
-        <button class="btn-ghost" onclick="addStep('response')">+ Response</button>
-        <button class="btn-ghost" onclick="addStep('wait')">+ Wait</button>
-      </div>
-    </div>
-
-    <div id="sub-preview" class="subview" style="display:none">
-      <div class="card">
-        <div class="field"><label>Experiment to preview</label><select id="runSelect"><option value="">— select —</option></select></div>
-        <button class="btn-primary" onclick="startResearcherPreview()">▶ Run Preview</button>
-        <div class="sub" style="margin-top:8px">Runs exactly like a tester would see it, and logs into Response Data below.</div>
-      </div>
-    </div>
-
-    <div id="sub-data" class="subview" style="display:none">
-      <div class="card" id="dataCard"><div class="empty">No submissions yet.</div></div>
-    </div>
-  </div>
-
-  <!-- CONSENT -->
-  <div id="consent" class="screen">
-    <button class="btn-ghost btn-sm" onclick="showScreen('landing')">← Back</button>
-    <div class="card" style="max-width:520px;margin:20px auto 0">
-      <h2 style="font-size:18px">Before you begin</h2>
-      <div class="consent-text">
-        <p><b>Purpose:</b> This is a short behavioral study with three brief tasks (shape recognition, memory, and response time). It's part of a hackathon prototype, not a formal research study.</p>
-        <p><b>Voluntary participation:</b> You may stop at any time by closing this tab. There is no penalty for withdrawing.</p>
-        <p><b>Data collected:</b> Only your on-screen responses and reaction times (in milliseconds) are recorded. No name, email, or other identifying information is collected — you'll be assigned a random anonymous ID.</p>
-        <p><b>Use of data:</b> Anonymized results may be viewed by the researcher running this prototype for demo purposes.</p>
-        <p>By checking the box below, you confirm you're 18+ (or have guardian permission) and agree to participate under these terms.</p>
-      </div>
-      <div class="check-row">
-        <input type="checkbox" id="agreeBox" onchange="document.getElementById('continueBtn').disabled=!this.checked">
-        <label for="agreeBox" style="margin:0">I have read and agree to the terms above.</label>
-      </div>
-      <button class="btn-primary" id="continueBtn" disabled onclick="showScreen('testerSelect')" style="width:100%">Continue →</button>
-    </div>
-  </div>
-
-  <!-- TESTER: SELECT EXPERIMENT -->
-  <div id="testerSelect" class="screen">
-    <h2 style="font-size:20px;text-align:center">Choose a study</h2>
-    <div class="sub" style="text-align:center;margin-bottom:6px">Each takes about a minute. Use your keyboard when prompted.</div>
-    <div class="grid3">
-      <div class="expcard">
-        <h3>🔺 Shape Recognition</h3>
-        <p>A shape flashes briefly — identify it as fast as you can.</p>
-        <button class="btn-primary" onclick="startTesterExperiment('shape')" style="width:100%">Start</button>
-      </div>
-      <div class="expcard">
-        <h3>🧠 Memory Experiment</h3>
-        <p>Memorize a short list of words, then answer whether specific words appeared.</p>
-        <button class="btn-primary" onclick="startTesterExperiment('memory')" style="width:100%">Start</button>
-      </div>
-      <div class="expcard">
-        <h3>⚡ Response Time</h3>
-        <p>Press SPACE as fast as you can each time the circle appears.</p>
-        <button class="btn-primary" onclick="startTesterExperiment('rt')" style="width:100%">Start</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TESTER: THANKS -->
-  <div id="testerThanks" class="screen">
-    <div class="hero">
-      <h2>Thanks for participating! 🎉</h2>
-      <p>Your anonymized responses have been recorded.</p>
-      <button class="btn-primary" onclick="showScreen('testerSelect')">Take another study</button>
-      &nbsp;
-      <button class="btn-ghost" onclick="showScreen('landing')">Back to home</button>
-    </div>
-  </div>
-
-</div>
+</section>
 
 <script>
-// ---------------- shared state ----------------
-let steps = [];      // builder-in-progress steps (researcher)
-let results = [];    // last-run trial results
+/* ---------- storage ---------- */
+const LS_EXP='sx_experiments', LS_RES='sx_results';
+let _memExp=null, _memRes=null; // in-memory fallback if localStorage is blocked
+function loadExp(){
+  if(_memExp)return _memExp;
+  try{_memExp=JSON.parse(localStorage.getItem(LS_EXP)||'[]');}catch(e){_memExp=[];}
+  return _memExp;
+}
+function saveExp(e){
+  _memExp=e;
+  try{localStorage.setItem(LS_EXP,JSON.stringify(e));}catch(err){console.warn('localStorage unavailable, using in-memory session only',err);}
+}
+function loadRes(){
+  if(_memRes)return _memRes;
+  try{_memRes=JSON.parse(localStorage.getItem(LS_RES)||'[]');}catch(e){_memRes=[];}
+  return _memRes;
+}
+function saveRes(r){
+  _memRes=r;
+  try{localStorage.setItem(LS_RES,JSON.stringify(r));}catch(err){console.warn('localStorage unavailable, using in-memory session only',err);}
+}
+const uid=(n=8)=>Array.from({length:n},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
 
-function uid(){ return Math.random().toString(36).slice(2,9); }
-function esc(str){ return (str||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+/* ---------- router ---------- */
+function go(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+id).classList.add('active');window.scrollTo(0,0);}
 
-// ---------------- screen switching ----------------
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-document.querySelectorAll('.subtab').forEach(t=>{
-  t.onclick = ()=>{
-    document.querySelectorAll('.subtab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    document.querySelectorAll('.subview').forEach(v=>v.style.display='none');
-    document.getElementById('sub-'+t.dataset.sub).style.display='block';
-    if(t.dataset.sub==='data') renderDataView();
-  };
-});
+/* ---------- home mini animation ---------- */
+(function homeAnim(){
+  const ticks=document.getElementById('homeTicks');
+  for(let i=0;i<24;i++){const d=document.createElement('div');d.className='tick';d.style.height=(20+Math.random()*80)+'%';ticks.appendChild(d);}
+  const numEl=document.getElementById('homeTimer');
+  setInterval(()=>{const v=180+Math.floor(Math.random()*140);numEl.innerHTML=v+'<span style="font-size:22px;color:var(--muted)"> ms</span>';},2200);
+})();
 
-// ---------------- researcher login ----------------
-function researcherLogin(){
-  const name = document.getElementById('rName').value.trim() || 'Researcher';
-  document.getElementById('rNameShow').textContent = name;
-  refreshExperimentLists();
-  renderSteps();
-  showScreen('researcherDash');
+/* ---------- login ---------- */
+let pendingRole=null;
+function selectRole(role){
+  pendingRole=role;
+  document.getElementById('roleResearcherBtn').classList.toggle('sel',role==='researcher');
+  document.getElementById('roleParticipantBtn').classList.toggle('sel',role==='participant');
+  document.getElementById('researcherLoginFields').style.display=role==='researcher'?'block':'none';
+  document.getElementById('participantLoginFields').style.display=role==='participant'?'block':'none';
 }
+const VALID_LAB_IDS=['IIITS-LAB-1','IIITS-LAB-2','IIITS-LAB-3'];
+function loginResearcher(){
+  const name=document.getElementById('researcherName').value.trim();
+  const labId=document.getElementById('researcherLabId').value.trim().toUpperCase();
+  const err=document.getElementById('researcherLoginError');
+  if(!name){err.textContent='Please enter a username.';return;}
+  if(!labId){err.textContent='Please enter a lab ID.';return;}
+  if(!VALID_LAB_IDS.includes(labId)){err.textContent='Invalid lab ID. Please check and try again.';return;}
+  err.textContent='';
+  sessionStorage.setItem('sx_name',name);
+  sessionStorage.setItem('sx_labid',labId);
+  document.getElementById('researcherNameTag').textContent=name+' · '+labId;
+  go('researcher'); setResearcherTab('builder');
+}
+function loginParticipant(){
+  const continent=document.getElementById('participantContinent').value;
+  const ageGroup=document.getElementById('participantAgeGroup').value;
+  const err=document.getElementById('participantLoginError');
+  if(!continent||!ageGroup){err.textContent='Please select your continent and age group to continue.';return;}
+  err.textContent='';
+  const pid='P-'+uid(6);
+  sessionStorage.setItem('sx_pid',pid);
+  sessionStorage.setItem('sx_continent',continent);
+  sessionStorage.setItem('sx_completed','[]');
+  sessionStorage.setItem('sx_ageGroup',ageGroup);
+  document.getElementById('pidTag').textContent=pid;
+  go('join');
+  renderAvailableExperiments();
+}
+function iconFor(t){return t==='reaction'?'🎯':t==='visual'?'🔢':t==='memory'?'🧠':'🧮';}
+function renderAvailableExperiments(){
+  const box=document.getElementById('availableExpList');
+  let completed=[]; try{completed=JSON.parse(sessionStorage.getItem('sx_completed')||'[]');}catch(e){completed=[];}
+  const exps=loadExp().filter(e=>!completed.includes(e.id));
+  if(!loadExp().length){box.innerHTML='<div class="empty">No experiments have been created yet — check back soon.</div>';return;}
+  if(!exps.length){box.innerHTML='<div class="empty">You\'ve completed every available experiment — nice work! Check back later for new ones.</div>';return;}
+  box.innerHTML=exps.map(e=>`
+    <button class="avail-item" onclick="startFromList('${e.id}')">
+      <span class="avail-icon">${iconForTypes(typesOf(e))}</span>
+      <span class="avail-body">
+        <div class="avail-title">${escapeHtml(e.title)}</div>
+        <div class="avail-sub">${labelForTypes(typesOf(e))}</div>
+      </span>
+    </button>`).join('');
+}
+function startFromList(expId){
+  const exp=loadExp().find(e=>e.id===expId); if(!exp)return;
+  document.getElementById('playExpTag').textContent=exp.title;
+  go('play');
+  showExperimentIntro(exp);
+}
+function logout(){sessionStorage.clear();go('home');}
 
-// ---------------- builder ----------------
-function addStep(type){
-  const base = {id:uid(), type};
-  if(type==='instruction') Object.assign(base,{text:'Welcome. Press space to continue.'});
-  if(type==='stimulus') Object.assign(base,{text:'RED', duration:1000});
-  if(type==='response') Object.assign(base,{prompt:'Press F or J', keys:'f,j', timeout:3000});
-  if(type==='wait') Object.assign(base,{duration:500});
-  steps.push(base);
-  renderSteps();
+/* ---------- researcher: builder ---------- */
+function setResearcherTab(tab){
+  document.querySelectorAll('.rail-item').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  if(tab!=='results')clearInterval(_resultsTimer);
+  tab==='builder'?renderBuilder():renderResultsPane();
 }
-function removeStep(id){ steps = steps.filter(s=>s.id!==id); renderSteps(); }
-function moveStep(id,dir){
-  const i = steps.findIndex(s=>s.id===id);
-  const j = i+dir;
-  if(j<0||j>=steps.length) return;
-  [steps[i],steps[j]] = [steps[j],steps[i]];
-  renderSteps();
+let stagedTypes=new Set();
+function renderBuilder(){
+  stagedTypes.clear();
+  const exps=loadExp();
+  const rows=exps.map(e=>{
+    const badges=typesOf(e).map(t=>`<span class="exp-type">${labelFor(t)} · ${countFor(e,t)}${t==='aptitude'?'s':''}</span>`).join(' ');
+    return `<div class="exp-row">
+      <span style="display:flex;gap:6px;flex-wrap:wrap">${badges}</span>
+      <input class="exp-title-in" value="${escapeHtml(e.title)}" onchange="renameExp('${e.id}',this.value)">
+      <button class="btn btn-sm btn-danger" onclick="deleteExp('${e.id}',this)">Delete</button>
+    </div>`;
+  }).join('') || '<div class="empty">No experiments yet — select one or more task blocks below, then create.</div>';
+  document.getElementById('researcherPane').innerHTML=`
+    <div class="pane-head"><h2>Experiment builder</h2></div>
+    <p class="lede" style="margin-bottom:14px">Select one or more tasks below, set how many trials each should run, and Labbench will mix individual trials from every selected task into one randomly-ordered session.</p>
+    <div class="blocks-row">
+      <div class="block" data-type="reaction" draggable="true" ondragstart="dragType(event,'reaction')" onclick="toggleStaged('reaction')">🎯 Reaction Time</div>
+      <div class="block" data-type="visual" draggable="true" ondragstart="dragType(event,'visual')" onclick="toggleStaged('visual')">🔢 Visual Test</div>
+      <div class="block" data-type="memory" draggable="true" ondragstart="dragType(event,'memory')" onclick="toggleStaged('memory')">🧠 Memory Test</div>
+      <div class="block" data-type="aptitude" draggable="true" ondragstart="dragType(event,'aptitude')" onclick="toggleStaged('aptitude')">🧮 Aptitude Test</div>
+    </div>
+    <div class="dropzone" id="dz" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropBlock(event)"></div>
+    <div id="expList">${rows}</div>`;
+  renderDropzone();
 }
-function updateStep(id, field, val){
-  const s = steps.find(s=>s.id===id);
-  if(!s) return;
-  s[field] = (field==='duration'||field==='timeout') ? Number(val) : val;
+function syncBlockSelection(){
+  document.querySelectorAll('.block').forEach(b=>b.classList.toggle('sel',stagedTypes.has(b.dataset.type)));
 }
-function renderSteps(){
-  const el = document.getElementById('stepsList');
-  if(!el) return;
-  if(steps.length===0){ el.innerHTML = '<div class="empty">No steps yet. Add one below.</div>'; return; }
-  el.innerHTML = steps.map((s,i)=>{
-    let fields = '';
-    if(s.type==='instruction'){
-      fields = `<div class="field"><label>Text</label><textarea onchange="updateStep('${s.id}','text',this.value)">${esc(s.text)}</textarea></div>`;
-    } else if(s.type==='stimulus'){
-      fields = `<div class="row">
-        <div class="field"><label>Stimulus text</label><input type="text" value="${esc(s.text)}" onchange="updateStep('${s.id}','text',this.value)"></div>
-        <div class="field" style="max-width:140px"><label>Duration (ms)</label><input type="number" value="${s.duration}" onchange="updateStep('${s.id}','duration',this.value)"></div>
-      </div>`;
-    } else if(s.type==='response'){
-      fields = `<div class="row">
-        <div class="field"><label>Prompt</label><input type="text" value="${esc(s.prompt)}" onchange="updateStep('${s.id}','prompt',this.value)"></div>
-        <div class="field" style="max-width:140px"><label>Allowed keys</label><input type="text" value="${esc(s.keys)}" onchange="updateStep('${s.id}','keys',this.value)"></div>
-        <div class="field" style="max-width:140px"><label>Timeout (ms)</label><input type="number" value="${s.timeout}" onchange="updateStep('${s.id}','timeout',this.value)"></div>
-      </div>`;
-    } else if(s.type==='wait'){
-      fields = `<div class="field" style="max-width:180px"><label>Duration (ms)</label><input type="number" value="${s.duration}" onchange="updateStep('${s.id}','duration',this.value)"></div>`;
-    }
-    return `<div class="step">
-      <div class="step-head">
-        <span class="badge ${s.type}">${i+1}. ${s.type}</span>
-        <span>
-          <button class="btn-ghost btn-sm" onclick="moveStep('${s.id}',-1)">▲</button>
-          <button class="btn-ghost btn-sm" onclick="moveStep('${s.id}',1)">▼</button>
-          <button class="btn-danger btn-sm" onclick="removeStep('${s.id}')">✕</button>
-        </span>
-      </div>
-      ${fields}
+function renderDropzone(){
+  const dz=document.getElementById('dz');
+  if(stagedTypes.size===0){
+    dz.innerHTML='Drag blocks here, or tap them above, to combine tasks into one experiment';
+    return;
+  }
+  const rowsHtml=[...stagedTypes].map(t=>{
+    const isApt=t==='aptitude';
+    return `<div class="exp-row" style="justify-content:flex-start">
+      <span class="exp-type">${labelFor(t)}</span>
+      <label style="margin:0;text-transform:none;font-size:13px;color:var(--muted)">${isApt?'Duration':'Trials'}</label>
+      <input type="number" min="1" max="${isApt?600:50}" value="${defaultCount(t)}" id="cfg_${t}" class="field mono" style="width:80px;margin:0">
+      <span class="note" style="margin:0">${isApt?'seconds':'each'}</span>
+      <button class="btn btn-sm btn-danger" onclick="toggleStaged('${t}')" style="margin-left:auto">Remove</button>
     </div>`;
   }).join('');
+  dz.innerHTML=`<div style="margin-bottom:14px;text-align:left">${rowsHtml}</div>
+    <input class="field exp-title-in" id="newExpTitleIn" placeholder="Experiment title" style="max-width:360px;margin:0 auto 14px;display:block;text-align:center">
+    <p class="note" style="margin-bottom:10px">Individual trials from each task will be shuffled together in random order.</p>
+    <button class="btn btn-primary" onclick="finalizeNewExperiment()">Create experiment (${stagedTypes.size} domain${stagedTypes.size>1?'s':''})</button>`;
 }
-
-// ---------------- researcher's custom experiment storage ----------------
-function allExperiments(){
-  try{ return JSON.parse(localStorage.getItem('cognilab_experiments')||'{}'); }catch(e){ return {}; }
+function toggleStaged(type){
+  if(stagedTypes.has(type))stagedTypes.delete(type); else stagedTypes.add(type);
+  syncBlockSelection(); renderDropzone();
 }
-function saveExperiment(){
-  const name = document.getElementById('expName').value.trim();
-  if(!name){ alert('Give the experiment a name first.'); return; }
-  const data = allExperiments();
-  data[name] = steps;
-  try{ localStorage.setItem('cognilab_experiments', JSON.stringify(data)); }catch(e){}
-  refreshExperimentLists();
-}
-function loadExperiment(name){
-  if(!name) return;
-  const data = allExperiments();
-  steps = data[name] || [];
-  document.getElementById('expName').value = name;
-  renderSteps();
-}
-function deleteExperiment(){
-  const name = document.getElementById('expName').value.trim();
-  const data = allExperiments();
-  delete data[name];
-  try{ localStorage.setItem('cognilab_experiments', JSON.stringify(data)); }catch(e){}
-  steps = []; document.getElementById('expName').value='';
-  renderSteps(); refreshExperimentLists();
-}
-function refreshExperimentLists(){
-  const data = allExperiments();
-  const names = Object.keys(data);
-  ['loadSelect','runSelect'].forEach(id=>{
-    const sel = document.getElementById(id);
-    if(!sel) return;
-    sel.innerHTML = '<option value="">— select —</option>' + names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+function finalizeNewExperiment(){
+  if(stagedTypes.size===0)return;
+  const types=[...stagedTypes];
+  const config={};
+  types.forEach(t=>{
+    const el=document.getElementById('cfg_'+t);
+    const v=parseInt(el&&el.value,10);
+    config[t]=(!v||v<1)?defaultCount(t):v;
   });
+  const title=(document.getElementById('newExpTitleIn')?.value||'').trim() || labelForTypes(types)+' Study';
+  const exps=loadExp();
+  exps.unshift({id:'e_'+uid(10),types,config,title,createdAt:Date.now()});
+  saveExp(exps);
+  renderBuilder();
+}
+function dragType(ev,type){ev.dataTransfer.setData('text/plain',type);}
+function dropBlock(ev){
+  ev.preventDefault();
+  document.getElementById('dz').classList.remove('over');
+  const type=ev.dataTransfer.getData('text/plain'); if(!type)return;
+  stagedTypes.add(type); syncBlockSelection(); renderDropzone();
+}
+function renameExp(id,val){const exps=loadExp();const e=exps.find(x=>x.id===id);if(e){e.title=val||e.title;saveExp(exps);}}
+function deleteExp(id,btn){
+  if(btn && !btn.dataset.armed){
+    btn.dataset.armed='1'; btn.textContent='Confirm delete?';
+    setTimeout(()=>{ if(btn.dataset.armed){delete btn.dataset.armed; btn.textContent='Delete';} },3000);
+    return;
+  }
+  saveExp(loadExp().filter(e=>e.id!==id));
+  renderBuilder();
+}
+function labelFor(t){return t==='reaction'?'Reaction Time':t==='visual'?'Visual Test':t==='memory'?'Memory Test':'Aptitude Test';}
+function typesOf(exp){return exp.types || (exp.type?[exp.type]:['reaction']);}
+function labelForTypes(types){return types.map(labelFor).join(' + ');}
+function iconForTypes(types){return types.map(iconFor).join(' ');}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function defaultCount(t){return t==='aptitude'?60:(t==='memory'?3:5);}
+function countFor(exp,t){return (exp.config&&exp.config[t])||defaultCount(t);}
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ---------- researcher: results ---------- */
+function renderResultsPane(){
+  const exps=loadExp(), results=loadRes();
+  const opts=exps.map(e=>`<option value="${e.id}">${escapeHtml(e.title)} (${labelForTypes(typesOf(e))})</option>`).join('');
+  document.getElementById('researcherPane').innerHTML=`
+    <div class="pane-head"><h2>Results</h2></div>
+    ${exps.length?`<select class="field" id="resExpSelect" onchange="renderResultDetail(this.value)"><option value="">Select an experiment…</option>${opts}</select><div id="resultDetail"></div>`
+    :'<div class="empty">Create an experiment in Builder first.</div>'}`;
+}
+function normalizeRow(r){
+  return r.domains ? r : {...r, domains:{[r.type]:{trials:r.trials,avgMs:r.avgMs,accuracy:r.accuracy}}};
+}
+let _resultsTimer=null;
+function renderResultDetail(expId){
+  clearInterval(_resultsTimer);
+  const box=document.getElementById('resultDetail');
+  if(!expId){box.innerHTML='';return;}
+  function draw(){
+    const exp=loadExp().find(e=>e.id===expId);
+    if(!exp){box.innerHTML='<div class="empty">Experiment not found.</div>';clearInterval(_resultsTimer);return;}
+    const types=typesOf(exp);
+    const rows=loadRes().filter(r=>r.experimentId===expId).map(normalizeRow);
+    if(!rows.length){box.innerHTML='<div class="empty">No submissions yet for this experiment. This view refreshes automatically.</div>';return;}
+    const domainCards=types.map(t=>{
+      const vals=rows.map(r=>r.domains[t]).filter(Boolean);
+      if(!vals.length)return `<div class="stat"><div class="v">—</div><div class="l">${labelFor(t)}</div></div>`;
+      const avgT=Math.round(vals.reduce((s,v)=>s+v.avgMs,0)/vals.length);
+      const showAcc=t!=='reaction';
+      const avgAcc=showAcc?Math.round(vals.reduce((s,v)=>s+(v.accuracy||0),0)/vals.length*100):null;
+      return `<div class="stat"><div class="v">${avgT} ms</div><div class="l">${labelFor(t)}${showAcc?' · '+avgAcc+'% acc':''}</div></div>`;
+    }).join('');
+    const domainCols=types.map(t=>`<th>${labelFor(t)}</th>`).join('');
+    const tableRows=rows.slice().reverse().map(r=>{
+      const cells=types.map(t=>{
+        const v=r.domains[t];
+        if(!v)return '<td>—</td>';
+        return `<td class="mono">${Math.round(v.avgMs)} ms${t!=='reaction'?' · '+Math.round((v.accuracy||0)*100)+'%':''}</td>`;
+      }).join('');
+      return `<tr><td class="mono">${r.participantId}</td><td>${r.continent||'—'}</td><td>${r.ageGroup||'—'}</td>${cells}<td>${new Date(r.createdAt).toLocaleString()}</td></tr>`;
+    }).join('');
+    box.innerHTML=`
+      <div class="stat-row"><div class="stat"><div class="v">${rows.length}</div><div class="l">Submissions</div></div>${domainCards}</div>
+      <table><thead><tr><th>Participant</th><th>Continent</th><th>Age group</th>${domainCols}<th>Submitted</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+  }
+  draw();
+  _resultsTimer=setInterval(draw,2500);
 }
 
-// ---------------- the 3 built-in tester experiments ----------------
-const EXPERIMENTS = {
-  shape: { label:'Shape Recognition', steps:[
-    {type:'instruction', text:"You'll briefly see a shape. Press T for Triangle, S for Square, C for Circle. Press space to begin."},
-    {type:'stimulus', text:'▲', duration:700},
-    {type:'response', prompt:'Which shape was it? (T / S / C)', keys:'t,s,c', timeout:4000},
-    {type:'wait', duration:500},
-    {type:'stimulus', text:'■', duration:700},
-    {type:'response', prompt:'Which shape was it? (T / S / C)', keys:'t,s,c', timeout:4000},
-    {type:'wait', duration:500},
-    {type:'stimulus', text:'●', duration:700},
-    {type:'response', prompt:'Which shape was it? (T / S / C)', keys:'t,s,c', timeout:4000},
-  ]},
-  memory: { label:'Memory Experiment', steps:[
-    {type:'instruction', text:"Memorize the words as they appear, one at a time. Press space to begin."},
-    {type:'stimulus', text:'APPLE', duration:1200},
-    {type:'stimulus', text:'RIVER', duration:1200},
-    {type:'stimulus', text:'PENCIL', duration:1200},
-    {type:'wait', duration:800},
-    {type:'response', prompt:"Was 'RIVER' one of the words? (Y / N)", keys:'y,n', timeout:5000},
-    {type:'response', prompt:"Was 'TIGER' one of the words? (Y / N)", keys:'y,n', timeout:5000},
-    {type:'response', prompt:"Was 'APPLE' one of the words? (Y / N)", keys:'y,n', timeout:5000},
-  ]},
-  rt: { label:'Response Time', steps:[
-    {type:'instruction', text:"Press SPACE as fast as you can each time the circle appears. Press space to begin."},
-    {type:'wait', duration:800}, {type:'response', prompt:'●', keys:'space', timeout:1500},
-    {type:'wait', duration:1100}, {type:'response', prompt:'●', keys:'space', timeout:1500},
-    {type:'wait', duration:650}, {type:'response', prompt:'●', keys:'space', timeout:1500},
-    {type:'wait', duration:1300}, {type:'response', prompt:'●', keys:'space', timeout:1500},
-    {type:'wait', duration:900}, {type:'response', prompt:'●', keys:'space', timeout:1500},
-  ]}
-};
-
-function startTesterExperiment(key){
-  results = [];
-  runSequence(EXPERIMENTS[key].steps, 0, ()=>{
-    saveSubmission(key, EXPERIMENTS[key].label, results);
-    showScreen('testerThanks');
+/* ---------- participant: join ---------- */
+function showExperimentIntro(exp){
+  const stage=document.getElementById('stage');
+  const types=typesOf(exp);
+  const descs={
+    reaction:n=>`Reaction time — press SPACE the instant a circle turns green (${n} trial${n>1?'s':''}).`,
+    visual:n=>`Visual test — type back a flashed number as fast as you can (${n} trial${n>1?'s':''}).`,
+    memory:n=>`Memory test — pick the word you actually saw from a set of four (${n} round${n>1?'s':''}).`,
+    aptitude:n=>`Aptitude test — solve as many math problems as you can in ${n} seconds.`
+  };
+  const list=types.map(t=>`<li>${descs[t](countFor(exp,t))}</li>`).join('');
+  const multi=types.length>1;
+  stage.innerHTML=`
+    <div style="margin-bottom:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">${types.map(t=>`<span class="exp-type">${labelFor(t)}</span>`).join('')}</div>
+    <h2 style="margin:0 0 10px;font-size:22px">${escapeHtml(exp.title)}</h2>
+    <p class="instr">This experiment includes:</p>
+    <ul style="text-align:left;color:var(--muted);font-size:14px;line-height:1.7;margin:0 0 10px;padding-left:20px">${list}</ul>
+    ${multi?'<p class="instr">Individual trials from each task above are shuffled together into one random order.</p>':''}
+    <button class="btn btn-primary" style="width:100%" onclick="beginGame('${exp.id}')">Begin experiment</button>`;
+}
+function beginGame(expId){
+  const exp=loadExp().find(e=>e.id===expId); if(!exp)return;
+  const units=[];
+  typesOf(exp).forEach(t=>{
+    if(t==='aptitude'){ units.push({kind:'aptitude', duration:countFor(exp,t)}); }
+    else{ const n=countFor(exp,t); for(let i=0;i<n;i++) units.push({kind:'trial', domain:t}); }
   });
+  const queue=shuffle(units);
+  runUnitQueue(exp,queue,queue.length,{});
 }
-function startResearcherPreview(){
-  const name = document.getElementById('runSelect').value;
-  const data = allExperiments();
-  const seq = data[name];
-  if(!seq || seq.length===0){ alert('Select a saved experiment with at least one step.'); return; }
-  results = [];
-  runSequence(seq, 0, ()=>{
-    saveSubmission('custom:'+name, name+' (preview)', results);
-    document.querySelector('.subtab[data-sub="data"]').click();
-  });
-}
-
-// ---------------- submissions storage ----------------
-function saveSubmission(expKey, label, trialResults){
-  let subs = [];
-  try{ subs = JSON.parse(localStorage.getItem('cognilab_submissions')||'[]'); }catch(e){}
-  subs.push({ id: uid(), exp: expKey, label, ts: Date.now(), results: trialResults });
-  try{ localStorage.setItem('cognilab_submissions', JSON.stringify(subs)); }catch(e){}
-}
-function renderDataView(){
-  let subs = [];
-  try{ subs = JSON.parse(localStorage.getItem('cognilab_submissions')||'[]'); }catch(e){}
-  const card = document.getElementById('dataCard');
-  if(subs.length===0){ card.innerHTML = '<div class="empty">No submissions yet. Data collected here is only from this browser/device.</div>'; return; }
-
-  const rows = subs.map(s=>{
-    const rts = s.results.filter(r=>r.type==='response' && r.rt_ms!=='').map(r=>Number(r.rt_ms));
-    const avg = rts.length ? Math.round(rts.reduce((a,b)=>a+b,0)/rts.length) : '—';
-    return `<tr><td>${s.id}</td><td>${esc(s.label)}</td><td>${new Date(s.ts).toLocaleString()}</td><td>${s.results.length}</td><td>${avg}</td></tr>`;
-  }).join('');
-
-  const csvLines = ['submission_id,experiment,timestamp,trial,label,response,rt_ms'];
-  subs.forEach(s=>{
-    s.results.forEach(r=>{
-      csvLines.push(`${s.id},"${s.label.replace(/"/g,'')}",${new Date(s.ts).toISOString()},${r.index},"${(r.label||'').replace(/"/g,'')}",${r.key},${r.rt_ms}`);
+function runUnitQueue(exp,queue,total,acc){
+  if(!queue.length){finalizeSubmission(exp,acc);return;}
+  const stepNo=total-queue.length+1;
+  const unit=queue.shift();
+  const advance=()=>runUnitQueue(exp,queue,total,acc);
+  if(unit.kind==='aptitude'){
+    runAptitudePhase(unit.duration,stepNo,total,(trials,avgMs,accuracy)=>{
+      acc.aptitude={avgMs,accuracy}; advance();
     });
-  });
-
-  card.innerHTML = `
-    <div class="sub" style="margin-bottom:10px">${subs.length} submission(s) recorded on this device.</div>
-    <table><thead><tr><th>ID</th><th>Experiment</th><th>Date</th><th>Trials</th><th>Avg RT (ms)</th></tr></thead><tbody>${rows}</tbody></table>
-    <label style="margin-top:14px">All-trials CSV (select all &amp; copy)</label>
-    <textarea readonly onclick="this.select()" style="min-height:120px">${csvLines.join('\\n')}</textarea>
-    <div class="sub" style="margin-top:8px">Note: this prototype stores data in the browser only, so submissions only appear here if made on this same device/browser.</div>
-  `;
-}
-
-// ---------------- runner engine (shared) ----------------
-function runSequence(seq, i, onDone){
-  if(i>=seq.length){ onDone(); return; }
-  const s = seq[i];
-  const overlay = document.createElement('div');
-  overlay.className='runner';
-  document.body.appendChild(overlay);
-  function cleanup(){ overlay.remove(); }
-
-  if(s.type==='instruction'){
-    overlay.innerHTML = `<div class="stim">${esc(s.text)}</div><div class="hint">Press space to continue</div>`;
-    const onKey = (e)=>{ if(e.code==='Space'){ document.removeEventListener('keydown',onKey); cleanup(); runSequence(seq,i+1,onDone); } };
-    document.addEventListener('keydown', onKey);
-  } else if(s.type==='stimulus'){
-    overlay.innerHTML = `<div class="stim">${esc(s.text)}</div>`;
-    setTimeout(()=>{ cleanup(); runSequence(seq,i+1,onDone); }, s.duration||1000);
-  } else if(s.type==='wait'){
-    overlay.innerHTML = '';
-    setTimeout(()=>{ cleanup(); runSequence(seq,i+1,onDone); }, s.duration||500);
-  } else if(s.type==='response'){
-    overlay.innerHTML = `<div class="stim">${esc(s.prompt)}</div>`;
-    const allowed = (s.keys||'').split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
-    const t0 = performance.now();
-    let done = false;
-    const finish = (key, rt)=>{
-      if(done) return; done = true;
-      results.push({index:i+1, type:'response', label:s.prompt, key: key||'(timeout)', rt_ms: rt==null?'':Math.round(rt)});
-      document.removeEventListener('keydown', onKey);
-      cleanup(); runSequence(seq,i+1,onDone);
-    };
-    const onKey = (e)=>{
-      const k = (e.code==='Space') ? 'space' : e.key.toLowerCase();
-      if(allowed.length===0 || allowed.includes(k)){ finish(k, performance.now()-t0); }
-    };
-    document.addEventListener('keydown', onKey);
-    if(s.timeout){ setTimeout(()=>finish(null,null), s.timeout); }
+  } else {
+    runSingleTrial(unit.domain,stepNo,total,(ms,correct)=>{
+      if(!acc[unit.domain])acc[unit.domain]={trials:[],correctCt:0};
+      acc[unit.domain].trials.push(ms);
+      if(correct)acc[unit.domain].correctCt++;
+      advance();
+    });
   }
 }
+function runSingleTrial(domain,stepNo,total,cb){
+  if(domain==='reaction')runReactionTrial(stepNo,total,cb);
+  else if(domain==='visual')runVisualTrial(stepNo,total,cb);
+  else runMemoryTrial(stepNo,total,cb);
+}
+
+/* ---------- single reaction-time trial ---------- */
+function runReactionTrial(stepNo,total,cb){
+  const stage=document.getElementById('stage');
+  let waiting=true, tShown=0, timer=null;
+  function onKey(ev){
+    if(ev.code!=='Space')return; ev.preventDefault();
+    document.removeEventListener('keydown',onKey);
+    if(waiting){
+      clearTimeout(timer);
+      stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Reaction Time</div><p class="instr">Too soon — retrying this step…</p>`;
+      setTimeout(()=>runReactionTrial(stepNo,total,cb),900);
+      return;
+    }
+    const rt=Math.round(performance.now()-tShown);
+    stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Reaction Time</div><div class="result-line">Recorded: ${rt} ms</div>`;
+    setTimeout(()=>cb(rt,true),500);
+  }
+  stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Reaction Time</div>
+    <p class="instr">Press <b>SPACE</b> the instant the circle turns green. Don't press early.</p>
+    <div class="circle-zone wait" id="circle">wait…</div>`;
+  document.addEventListener('keydown',onKey);
+  const delay=1000+Math.random()*2200;
+  timer=setTimeout(()=>{
+    waiting=false;
+    const c=document.getElementById('circle'); if(c){c.className='circle-zone go';c.textContent='GO';}
+    tShown=performance.now();
+  },delay);
+}
+
+/* ---------- single visual-test trial ---------- */
+function runVisualTrial(stepNo,total,cb){
+  const stage=document.getElementById('stage');
+  const digits=3+Math.floor(Math.random()*3);
+  const num=Array.from({length:digits},()=>Math.floor(Math.random()*10)).join('');
+  stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Visual Test</div><p class="instr">Memorize the number.</p><div class="big-num">${num}</div>`;
+  setTimeout(()=>{
+    const shownAt=performance.now();
+    stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Visual Test</div><p class="instr">Type the number you saw, as fast as you can.</p>
+      <input class="field mono" id="numIn" style="text-align:center;font-size:22px" autofocus inputmode="numeric">
+      <button class="btn btn-primary" style="width:100%" onclick="_visualSubmit()">Submit</button>`;
+    const inp=document.getElementById('numIn'); inp.focus();
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')window._visualSubmit();});
+    window._visualSubmit=function(){
+      const rt=Math.round(performance.now()-shownAt);
+      const val=(document.getElementById('numIn').value||'').trim();
+      const correct=val===num;
+      stage.innerHTML=`<div class="result-line" style="margin-top:60px">${correct?'Correct':'Incorrect — was '+num} · ${rt} ms</div>`;
+      setTimeout(()=>cb(rt,correct),600);
+    };
+  },900);
+}
+
+/* ---------- single memory-test trial ---------- */
+const WORD_BANK=['river','castle','orbit','velvet','maple','signal','harbor','glacier','thunder','copper','meadow','whistle','anchor','crimson','falcon','tunnel','ember','quartz','ripple','lantern','marble','summit','willow','current','granite'];
+function pickWords(n,exclude=[]){
+  const pool=WORD_BANK.filter(w=>!exclude.includes(w));
+  const out=[]; while(out.length<n){const w=pool[Math.floor(Math.random()*pool.length)]; if(!out.includes(w))out.push(w);} return out;
+}
+function runMemoryTrial(stepNo,total,cb){
+  const stage=document.getElementById('stage');
+  const shown=pickWords(4);
+  stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Memory Test</div><p class="instr">Remember these four words.</p>
+    <div class="words-grid">${shown.map(w=>`<div class="word-chip">${w}</div>`).join('')}</div>`;
+  setTimeout(()=>{
+    const target=shown[Math.floor(Math.random()*shown.length)];
+    const distractors=pickWords(3,shown);
+    const options=[target,...distractors].sort(()=>Math.random()-.5);
+    const askAt=performance.now();
+    stage.innerHTML=`<div class="trial-tag">STEP ${stepNo} / ${total} · Memory Test</div><p class="instr">Which word did you see before?</p>
+      <div id="optWrap">${options.map(o=>`<button class="opt-btn" onclick="_memoryPick(this,'${o}','${target}')">${o}</button>`).join('')}</div>`;
+    window._memoryPick=function(btn,val,tgt){
+      const rt=Math.round(performance.now()-askAt);
+      document.querySelectorAll('#optWrap .opt-btn').forEach(b=>{b.disabled=true; if(b.textContent===tgt)b.classList.add('correct'); else if(b===btn)b.classList.add('wrong');});
+      const correct=val===tgt;
+      setTimeout(()=>cb(rt,correct),700);
+    };
+  },3000);
+}
+
+/* ---------- aptitude phase (its own timed block; not decomposed into steps) ---------- */
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function runAptitudePhase(duration,stepNo,total,onDone){
+  let timeLeft=duration, totalQ=0, correctCt=0, times=[];
+  let currentAnswer=0, shownAt=0, ended=false, timerHandle=null;
+  const stage=document.getElementById('stage');
+  function newQuestion(){
+    const ops=['+','−','×','÷'];
+    const op=ops[Math.floor(Math.random()*ops.length)];
+    let a,b;
+    if(op==='+'){a=randInt(2,60);b=randInt(2,60);currentAnswer=a+b;}
+    else if(op==='−'){a=randInt(2,60);b=randInt(2,60);if(b>a){const t=a;a=b;b=t;}currentAnswer=a-b;}
+    else if(op==='×'){a=randInt(2,12);b=randInt(2,12);currentAnswer=a*b;}
+    else{b=randInt(2,12);currentAnswer=randInt(2,12);a=b*currentAnswer;}
+    shownAt=performance.now();
+    stage.innerHTML=`
+      <div class="trial-tag">STEP ${stepNo} / ${total} · Aptitude Test — TIME LEFT: <span id="aptTimeLeft">${timeLeft}</span>s</div>
+      <p class="instr" style="margin-bottom:10px">${totalQ} answered · ${correctCt} correct</p>
+      <div class="big-num" style="font-size:46px">${a} ${op} ${b}</div>
+      <input class="field mono" id="aptIn" style="text-align:center;font-size:22px" autofocus inputmode="numeric" placeholder="Answer, then Enter">
+      <div class="result-line" id="aptFeedback"></div>`;
+    const inp=document.getElementById('aptIn'); inp.focus();
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter')submitAnswer(); });
+  }
+  function submitAnswer(){
+    if(ended)return;
+    const inp=document.getElementById('aptIn');
+    const val=parseInt((inp.value||'').trim(),10);
+    const rt=Math.round(performance.now()-shownAt);
+    totalQ++; times.push(rt);
+    const isCorrect=val===currentAnswer;
+    if(isCorrect)correctCt++;
+    newQuestion();
+    const fb=document.getElementById('aptFeedback'); if(fb)fb.textContent=isCorrect?'Correct':'Incorrect';
+  }
+  function tick(){
+    if(ended)return;
+    timeLeft--;
+    const el=document.getElementById('aptTimeLeft'); if(el)el.textContent=Math.max(timeLeft,0);
+    if(timeLeft<=0)finish();
+  }
+  function finish(){
+    if(ended)return; ended=true; clearInterval(timerHandle);
+    const avg=times.length?Math.round(times.reduce((a,b)=>a+b,0)/times.length):0;
+    const accuracy=totalQ?correctCt/totalQ:0;
+    stage.innerHTML=`
+      <p class="instr" style="color:var(--text);font-size:16px">Time's up — ${totalQ} questions answered.</p>
+      <div class="note" style="margin-bottom:18px">${correctCt}/${totalQ} correct · avg ${avg} ms per answer</div>
+      <button class="btn btn-primary" style="width:100%" onclick="aptitudeFinish()">Continue</button>`;
+    window.aptitudeFinish=()=>onDone(times,avg,accuracy);
+  }
+  timerHandle=setInterval(tick,1000);
+  newQuestion();
+}
+
+/* ---------- submit + summary ---------- */
+function finalizeSubmission(exp,acc){
+  const domains={};
+  Object.keys(acc).forEach(t=>{
+    const a=acc[t];
+    if(t==='aptitude'){ domains[t]={avgMs:a.avgMs,accuracy:a.accuracy}; return; }
+    const avgMs=Math.round(a.trials.reduce((s,v)=>s+v,0)/a.trials.length);
+    const accuracy=t==='reaction'?1:(a.correctCt/a.trials.length);
+    domains[t]={avgMs,accuracy};
+  });
+  const results=loadRes();
+  results.push({id:'r_'+uid(10),experimentId:exp.id,participantId:sessionStorage.getItem('sx_pid')||'P-anon',
+    continent:sessionStorage.getItem('sx_continent')||'',ageGroup:sessionStorage.getItem('sx_ageGroup')||'',
+    domains,createdAt:Date.now()});
+  saveRes(results);
+  try{
+    const completed=JSON.parse(sessionStorage.getItem('sx_completed')||'[]');
+    if(!completed.includes(exp.id)){completed.push(exp.id); sessionStorage.setItem('sx_completed',JSON.stringify(completed));}
+  }catch(e){}
+  const stage=document.getElementById('stage');
+  const cards=Object.keys(domains).map(t=>{
+    const v=domains[t];
+    const accCard=t!=='reaction'?`<div class="summary-card"><div class="v">${Math.round((v.accuracy||0)*100)}%</div><div class="l">${labelFor(t)} accuracy</div></div>`:'';
+    return `<div class="summary-card"><div class="v">${Math.round(v.avgMs)} ms</div><div class="l">${labelFor(t)} avg</div></div>${accCard}`;
+  }).join('');
+  stage.innerHTML=`
+    <p class="instr" style="font-size:16px;color:var(--text)">Nice work — your results were recorded anonymously.</p>
+    <div class="summary-grid">${cards}</div>
+    <div class="cta-row" style="justify-content:center">
+      <button class="btn btn-primary" onclick="exitToAnother()">Take another experiment</button>
+      <button class="btn" onclick="exitToHome()">Exit to homepage</button>
+    </div>
+    <div class="note">Your ID: ${sessionStorage.getItem('sx_pid')} — no personal data was collected.</div>`;
+}
+function exitToAnother(){go('join');renderAvailableExperiments();}
+function exitToHome(){sessionStorage.clear();go('home');}
 </script>
 </body>
 </html>
