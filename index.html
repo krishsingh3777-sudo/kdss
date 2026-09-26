@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CogniLab — Online Behavioral Experiment Platform</title>
+<style>
+:root{
+  --bg:#f7f8fb; --card:#ffffff; --text:#14161c; --muted:#6b7280;
+  --accent:#3452e1; --accent2:#7c3aed; --border:#e2e5ec; --danger:#d33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12131a; --card:#1b1d27; --text:#eceef4; --muted:#9aa0b0;
+    --accent:#7c93ff; --accent2:#b28dff; --border:#2b2e3a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12131a; --card:#1b1d27; --text:#eceef4; --muted:#9aa0b0;
+  --accent:#7c93ff; --accent2:#b28dff; --border:#2b2e3a;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
+*{box-sizing:border-box;}
+body{height:100%;margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 40px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0 18px;}
+.brand{font-size:19px;font-weight:800;}
+.navbtns{display:flex;gap:8px;}
+h2{font-size:26px;margin:0 0 8px;}
+.sub{color:var(--muted);font-size:13px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+input[type=text],input[type=number],input[type=password],select,textarea{
+  background:var(--bg);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:8px 10px;font-size:14px;width:100%;
+}
+textarea{min-height:60px;font-family:inherit;resize:vertical;}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:3px;}
+.field{flex:1;min-width:140px;margin-bottom:8px;}
+button{cursor:pointer;border:none;border-radius:8px;padding:9px 14px;font-size:14px;font-weight:600;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--border);}
+.btn-sm{padding:5px 9px;font-size:12px;font-weight:500;}
+.step{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+.step-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+  padding:2px 8px;border-radius:999px;background:var(--accent);color:#fff;}
+.badge.stimulus{background:var(--accent2);}
+.badge.response{background:#e08a2a;}
+.badge.wait{background:#6b7280;}
+.addbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.runner{position:fixed;inset:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:24px;z-index:50;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
+.runner .stim{font-size:34px;max-width:80%;}
+.runner .hint{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));font-size:13px;color:#aaa;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;}
+.empty{color:var(--muted);font-size:13px;padding:10px 0;}
+.hero{padding:20px 4px 20px;text-align:center;}
+.hero p{color:var(--muted);font-size:15px;max-width:540px;margin:0 auto 18px;}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--accent);background:rgba(52,82,225,.12);padding:4px 10px;border-radius:999px;margin-bottom:12px;}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0;}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0;}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:left;}
+.feat h3{font-size:14px;margin:8px 0 4px;}
+.feat p{font-size:12.5px;color:var(--muted);margin:0;}
+.expcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:left;}
+.expcard h3{margin:6px 0 6px;font-size:16px;}
+.expcard p{font-size:13px;color:var(--muted);margin:0 0 12px;min-height:52px;}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);}
+.subtabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.subtab{padding:8px 12px;border:none;background:none;color:var(--muted);font-size:13px;cursor:pointer;border-bottom:2px solid transparent;}
+.subtab.active{color:var(--accent);border-color:var(--accent);font-weight:600;}
+.consent-text{max-height:220px;overflow-y:auto;font-size:13px;color:var(--muted);border:1px solid var(--border);
+  border-radius:8px;padding:12px;margin-bottom:14px;text-align:left;}
+.consent-text p{margin:0 0 10px;}
+.check-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;text-align:left;font-size:13px;}
+.check-row input{width:auto;margin-top:2px;}
+.screen{display:none;}
+.screen.active{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">🧠 CogniLab</div>
+    <div class="navbtns" id="navbtns">
+      <button class="btn-ghost btn-sm" onclick="showScreen('researcherLogin')">Researcher Login</button>
+      <button class="btn-primary btn-sm" onclick="showScreen('consent')">Take the Study</button>
+    </div>
+  </div>
+
+  <!-- LANDING -->
+  <div id="landing" class="screen active">
+    <div class="hero">
+      <span class="pill">Web Development Track — BNB Round 1</span>
+      <h2>Millisecond-accurate experiments.<br>Zero lines of code.</h2>
+      <p>CogniLab lets researchers visually build behavioral experiments and run them in any browser — with the timing precision reaction-time studies actually need. Testers can take part in three ready-made studies right now.</p>
+    </div>
+    <div class="grid4">
+      <div class="feat"><h3>🧩 No-code trial builder</h3><p>Instruction, stimulus, response and wait blocks — reorder and configure without writing a line of JavaScript.</p></div>
+      <div class="feat"><h3>⏱️ High-precision timing</h3><p>Stimulus onset and reaction time captured via the browser's high-resolution clock.</p></div>
+      <div class="feat"><h3>🔒 Anonymous by design</h3><p>No personal data collected — just anonymized trial-by-trial responses.</p></div>
+      <div class="feat"><h3>📤 Instant export</h3><p>Every run produces a clean CSV of trial, response and reaction time.</p></div>
+    </div>
+    <div class="foot">CogniLab · a small-scale prototype for the BNB Round 1 hackathon</div>
+  </div>
+
+  <!-- RESEARCHER LOGIN -->
+  <div id="researcherLogin" class="screen">
+    <button class="btn-ghost btn-sm" onclick="showScreen('landing')">← Back</button>
+    <div class="card" style="max-width:360px;margin:24px auto 0">
+      <h2 style="font-size:18px">Researcher Login</h2>
+      <div class="sub" style="margin-bottom:14px">Demo login — any name and access code works.</div>
+      <div class="field"><label>Name</label><input type="text" id="rName" placeholder="Dr. Ada Lovelace"></div>
+      <div class="field"><label>Access code</label><input type="password" id="rCode" placeholder="••••••••"></div>
+      <button class="btn-primary" onclick="researcherLogin()" style="width:100%">Enter dashboard →</button>
+    </div>
+  </div>
+
+  <!-- RESEARCHER DASHBOARD -->
+  <div id="researcherDash" class="screen">
+    <div class="topbar" style="padding-top:0">
+      <div class="sub">Signed in as <b id="rNameShow"></b></div>
+      <button class="btn-ghost btn-sm" onclick="showScreen('landing')">Log out</button>
+    </div>
+    <div class="subtabs">
+      <button class="subtab active" data-sub="build">My Experiments</button>
+      <button class="subtab" data-sub="preview">Preview &amp; Run</button>
+      <button class="subtab" data-sub="data">Response Data</button>
+    </div>
+
+    <div id="sub-build" class="subview">
+      <div class="card">
+        <div class="row">
+          <div class="field"><label>Experiment name</label><input type="text" id="expName" placeholder="e.g. Stroop Task Pilot"></div>
+          <button class="btn-primary" onclick="saveExperiment()">Save</button>
+        </div>
+        <div class="row" style="margin-top:4px">
+          <div class="field"><label>Load saved experiment</label><select id="loadSelect" onchange="loadExperiment(this.value)"><option value="">— select —</option></select></div>
+          <button class="btn-danger" onclick="deleteExperiment()">Delete</button>
+        </div>
+      </div>
+      <div id="stepsList"></div>
+      <div class="addbar">
+        <button class="btn-ghost" onclick="addStep('instruction')">+ Instruction</button>
+        <button class="btn-ghost" onclick="addStep('stimulus')">+ Stimulus</button>
+        <button class="btn-ghost" onclick="addStep('response')">+ Response</button>
+        <button class="btn-ghost" onclick="addStep('wait')">+ Wait</button>
+      </div>
+    </div>
+
+    <div id="sub-preview" class="subview" style="display:none">
+      <div class="card">
+        <div class="field"><label>Experiment to preview</label><select id="runSelect"><option value="">— select —</option></select></div>
+        <button class="btn-primary" onclick="startResearcherPreview()">▶ Run Preview</button>
+        <div class="sub" style="margin-top:8px">Runs exactly like a tester would see it, and logs into Response Data below.</div>
+      </div>
+    </div>
+
+    <div id="sub-data" class="subview" style="display:none">
+      <div class="card" id="dataCard"><div class="empty">No submissions yet.</div></div>
+    </div>
+  </div>
+
+  <!-- CONSENT -->
+  <div id="consent" class="screen">
+    <button class="btn-ghost btn-sm" onclick="showScreen('landing')">← Back</button>
+    <div class="card" style="max-width:520px;margin:20px auto 0">
+      <h2 style="font-size:18px">Before you begin</h2>
+      <div class="consent-text">
+        <p><b>Purpose:</b> This is a short behavioral study with three brief tasks (shape recognition, memory, and response time). It's part of a hackathon prototype, not a formal research study.</p>
+        <p><b>Voluntary participation:</b> You may stop at any time by closing this tab. There is no penalty for withdrawing.</p>
+        <p><b>Data collected:</b> Only your on-screen responses and reaction times (in milliseconds) are recorded. No name, email, or other identifying information is collected — you'll be assigned a random anonymous ID.</p>
+        <p><b>Use of data:</b> Anonymized results may be viewed by the researcher running this prototype for demo purposes.</p>
+        <p>By checking the box below, you confirm you're 18+ (or have guardian permission) and agree to participate under these terms.</p>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="agreeBox" onchange="document.getElementById('continueBtn').disabled=!this.checked">
+        <label for="agreeBox" style="margin:0">I have read and agree to the terms above.</label>
+      </div>
+      <button class="btn-primary" id="continueBtn" disabled onclick="showScreen('testerSelect')" style="width:100%">Continue →</button>
+    </div>
+  </div>
+
+  <!-- TESTER: SELECT EXPERIMENT -->
+  <div id="testerSelect" class="screen">
+    <h2 style="font-size:20px;text-align:center">Choose a study</h2>
+    <div class="sub" style="text-align:center;margin-bottom:6px">Each takes about a minute. Use your keyboard when prompted.</div>
+    <div class="grid3">
+      <div class="expcard">
+        <h3>🔺 Shape Recognition</h3>
+        <p>A shape flashes briefly — identify it as fast as you can.</p>
+        <button class="btn-primary" onclick="startTesterExperiment('shape')" style="width:100%">Start</button>
+      </div>
+      <div class="expcard">
+        <h3>🧠 Memory Experiment</h3>
+        <p>Memorize a short list of words, then answer whether specific words appeared.</p>
+        <button class="btn-primary" onclick="startTesterExperiment('memory')" style="width:100%">Start</button>
+      </div>
+      <div class="expcard">
+        <h3>⚡ Response Time</h3>
+        <p>Press SPACE as fast as you can each time the circle appears.</p>
+        <button class="btn-primary" onclick="startTesterExperiment('rt')" style="width:100%">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTER: THANKS -->
+  <div id="testerThanks" class="screen">
+    <div class="hero">
+      <h2>Thanks for participating! 🎉</h2>
+      <p>Your anonymized responses have been recorded.</p>
+      <button class="btn-primary" onclick="showScreen('testerSelect')">Take another study</button>
+      &nbsp;
+      <button class="btn-ghost" onclick="showScreen('landing')">Back to home</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---------------- shared state ----------------
+let steps = [];      // builder-in-progress steps (researcher)
+let results = [];    // last-run trial results
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function esc(str){ return (str||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+// ---------------- screen switching ----------------
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+document.querySelectorAll('.subtab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.subtab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.subview').forEach(v=>v.style.display='none');
+    document.getElementById('sub-'+t.dataset.sub).style.display='block';
+    if(t.dataset.sub==='data') renderDataView();
+  };
+});
+
+// ---------------- researcher login ----------------
+function researcherLogin(){
+  const name = document.getElementById('rName').value.trim() || 'Researcher';
+  document.getElementById('rNameShow').textContent = name;
+  refreshExperimentLists();
+  renderSteps();
+  showScreen('researcherDash');
+}
+
+// ---------------- builder ----------------
+function addStep(type){
+  const base = {id:uid(), type};
+  if(type==='instruction') Object.assign(base,{text:'Welcome. Press space to continue.'});
+  if(type==='stimulus') Object.assign(base,{text:'RED', duration:1000});
+  if(type==='response') Object.assign(base,{prompt:'Press F or J', keys:'f,j', timeout:3000});
+  if(type==='wait') Object.assign(base,{duration:500});
+  steps.push(base);
+  renderSteps();
+}
+function removeStep(id){ steps = steps.filter(s=>s.id!==id); renderSteps(); }
+function moveStep(id,dir){
+  const i = steps.findIndex(s=>s.id===id);
+  const j = i+dir;
+  if(j<0||j>=steps.length) return;
+  [steps[i],steps[j]] = [steps[j],steps[i]];
+  renderSteps();
+}
+function updateStep(id, field, val){
+  const s = steps.find(s=>s.id===id);
+  if(!s) return;
+  s[field] = (field==='duration'||field==='timeout') ? Number(val) : val;
+}
+function renderSteps(){
+  const el = document.getElementById('stepsList');
+  if(!el) return;
+  if(steps.length===0){ el.innerHTML = '<div class="empty">No steps yet. Add one below.</div>'; return; }
+  el.innerHTML = steps.map((s,i)=>{
+    let fields = '';
+    if(s.type==='instruction'){
+      fields = `<div class="field"><label>Text</label><textarea onchange="updateStep('${s.id}','text',this.value)">${esc(s.text)}</textarea></div>`;
+    } else if(s.type==='stimulus'){
+      fields = `<div class="row">
+        <div class="field"><label>Stimulus text</label><input type="text" value="${esc(s.text)}" onchange="updateStep('${s.id}','text',this.value)"></div>
+        <div class="field" style="max-width:140px"><label>Duration (ms)</label><input type="number" value="${s.duration}" onchange="updateStep('${s.id}','duration',this.value)"></div>
+      </div>`;
+    } else if(s.type==='response'){
+      fields = `<div class="row">
+        <div class="field"><label>Prompt</label><input type="text" value="${esc(s.prompt)}" onchange="updateStep('${s.id}','prompt',this.value)"></div>
+        <div class="field" style="max-width:140px"><label>Allowed keys</label><input type="text" value="${esc(s.keys)}" onchange="updateStep('${s.id}','keys',this.value)"></div>
+        <div class="field" style="max-width:140px"><label>Timeout (ms)</label><input type="number" value="${s.timeout}" onchange="updateStep('${s.id}','timeout',this.value)"></div>
+      </div>`;
+    } else if(s.type==='wait'){
+      fields = `<div class="field" style="max-width:180px"><label>Duration (ms)</label><input type="number" value="${s.duration}" onchange="updateStep('${s.id}','duration',this.value)"></div>`;
+    }
+    return `<div class="step">
+      <div class="step-head">
+        <span class="badge ${s.type}">${i+1}. ${s.type}</span>
+        <span>
+          <button class="btn-ghost btn-sm" onclick="moveStep('${s.id}',-1)">▲</button>
+          <button class="btn-ghost btn-sm" onclick="moveStep('${s.id}',1)">▼</button>
+          <button class="btn-danger btn-sm" onclick="removeStep('${s.id}')">✕</button>
+        </span>
+      </div>
+      ${fields}
+    </div>`;
+  }).join('');
+}
+
+// ---------------- researcher's custom experiment storage ----------------
+function allExperiments(){
+  try{ return JSON.parse(localStorage.getItem('cognilab_experiments')||'{}'); }catch(e){ return {}; }
+}
+function saveExperiment(){
+  const name = document.getElementById('expName').value.trim();
+  if(!name){ alert('Give the experiment a name first.'); return; }
+  const data = allExperiments();
+  data[name] = steps;
+  try{ localStorage.setItem('cognilab_experiments', JSON.stringify(data)); }catch(e){}
+  refreshExperimentLists();
+}
+function loadExperiment(name){
+  if(!name) return;
+  const data = allExperiments();
+  steps = data[name] || [];
+  document.getElementById('expName').value = name;
+  renderSteps();
+}
+function deleteExperiment(){
+  const name = document.getElementById('expName').value.trim();
+  const data = allExperiments();
+  delete data[name];
+  try{ localStorage.setItem('cognilab_experiments', JSON.stringify(data)); }catch(e){}
+  steps = []; document.getElementById('expName').value='';
+  renderSteps(); refreshExperimentLists();
+}
+function refreshExperimentLists(){
+  const data = allExperiments();
+  const names = Object.keys(data);
+  ['loadSelect','runSelect'].forEach(id=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    sel.innerHTML = '<option value="">— select —</option>' + names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  });
+}
+
+// ---------------- the 3 built-in tester experiments ----------------
+const EXPERIMENTS = {
+  shape: { label:'Shape Recognition', steps:[
+    {type:'instruction', text:"You'll briefly see a shape. Press T for Triangle, S for Square, C for Circle. Press space to begin."},
+    {type:'stimulus', text:'▲', duration:700},
+    {type:'response', prompt:'Which shape was it? (T / S / C)', keys:'t,s,c', timeout:4000},
+    {type:'wait', duration:500},
+    {type:'stimulus', text:'■', duration:700},
+    {type:'response', prompt:'Which shape was it? (T / S / C)', keys:'t,s,c', timeout:4000},
+    {type:'wait', duration:500},
+    {type:'stimulus', text:'●', duration:700},
+    {type:'response', prompt:'Which shape was it? (T / S / C)', keys:'t,s,c', timeout:4000},
+  ]},
+  memory: { label:'Memory Experiment', steps:[
+    {type:'instruction', text:"Memorize the words as they appear, one at a time. Press space to begin."},
+    {type:'stimulus', text:'APPLE', duration:1200},
+    {type:'stimulus', text:'RIVER', duration:1200},
+    {type:'stimulus', text:'PENCIL', duration:1200},
+    {type:'wait', duration:800},
+    {type:'response', prompt:"Was 'RIVER' one of the words? (Y / N)", keys:'y,n', timeout:5000},
+    {type:'response', prompt:"Was 'TIGER' one of the words? (Y / N)", keys:'y,n', timeout:5000},
+    {type:'response', prompt:"Was 'APPLE' one of the words? (Y / N)", keys:'y,n', timeout:5000},
+  ]},
+  rt: { label:'Response Time', steps:[
+    {type:'instruction', text:"Press SPACE as fast as you can each time the circle appears. Press space to begin."},
+    {type:'wait', duration:800}, {type:'response', prompt:'●', keys:'space', timeout:1500},
+    {type:'wait', duration:1100}, {type:'response', prompt:'●', keys:'space', timeout:1500},
+    {type:'wait', duration:650}, {type:'response', prompt:'●', keys:'space', timeout:1500},
+    {type:'wait', duration:1300}, {type:'response', prompt:'●', keys:'space', timeout:1500},
+    {type:'wait', duration:900}, {type:'response', prompt:'●', keys:'space', timeout:1500},
+  ]}
+};
+
+function startTesterExperiment(key){
+  results = [];
+  runSequence(EXPERIMENTS[key].steps, 0, ()=>{
+    saveSubmission(key, EXPERIMENTS[key].label, results);
+    showScreen('testerThanks');
+  });
+}
+function startResearcherPreview(){
+  const name = document.getElementById('runSelect').value;
+  const data = allExperiments();
+  const seq = data[name];
+  if(!seq || seq.length===0){ alert('Select a saved experiment with at least one step.'); return; }
+  results = [];
+  runSequence(seq, 0, ()=>{
+    saveSubmission('custom:'+name, name+' (preview)', results);
+    document.querySelector('.subtab[data-sub="data"]').click();
+  });
+}
+
+// ---------------- submissions storage ----------------
+function saveSubmission(expKey, label, trialResults){
+  let subs = [];
+  try{ subs = JSON.parse(localStorage.getItem('cognilab_submissions')||'[]'); }catch(e){}
+  subs.push({ id: uid(), exp: expKey, label, ts: Date.now(), results: trialResults });
+  try{ localStorage.setItem('cognilab_submissions', JSON.stringify(subs)); }catch(e){}
+}
+function renderDataView(){
+  let subs = [];
+  try{ subs = JSON.parse(localStorage.getItem('cognilab_submissions')||'[]'); }catch(e){}
+  const card = document.getElementById('dataCard');
+  if(subs.length===0){ card.innerHTML = '<div class="empty">No submissions yet. Data collected here is only from this browser/device.</div>'; return; }
+
+  const rows = subs.map(s=>{
+    const rts = s.results.filter(r=>r.type==='response' && r.rt_ms!=='').map(r=>Number(r.rt_ms));
+    const avg = rts.length ? Math.round(rts.reduce((a,b)=>a+b,0)/rts.length) : '—';
+    return `<tr><td>${s.id}</td><td>${esc(s.label)}</td><td>${new Date(s.ts).toLocaleString()}</td><td>${s.results.length}</td><td>${avg}</td></tr>`;
+  }).join('');
+
+  const csvLines = ['submission_id,experiment,timestamp,trial,label,response,rt_ms'];
+  subs.forEach(s=>{
+    s.results.forEach(r=>{
+      csvLines.push(`${s.id},"${s.label.replace(/"/g,'')}",${new Date(s.ts).toISOString()},${r.index},"${(r.label||'').replace(/"/g,'')}",${r.key},${r.rt_ms}`);
+    });
+  });
+
+  card.innerHTML = `
+    <div class="sub" style="margin-bottom:10px">${subs.length} submission(s) recorded on this device.</div>
+    <table><thead><tr><th>ID</th><th>Experiment</th><th>Date</th><th>Trials</th><th>Avg RT (ms)</th></tr></thead><tbody>${rows}</tbody></table>
+    <label style="margin-top:14px">All-trials CSV (select all &amp; copy)</label>
+    <textarea readonly onclick="this.select()" style="min-height:120px">${csvLines.join('\\n')}</textarea>
+    <div class="sub" style="margin-top:8px">Note: this prototype stores data in the browser only, so submissions only appear here if made on this same device/browser.</div>
+  `;
+}
+
+// ---------------- runner engine (shared) ----------------
+function runSequence(seq, i, onDone){
+  if(i>=seq.length){ onDone(); return; }
+  const s = seq[i];
+  const overlay = document.createElement('div');
+  overlay.className='runner';
+  document.body.appendChild(overlay);
+  function cleanup(){ overlay.remove(); }
+
+  if(s.type==='instruction'){
+    overlay.innerHTML = `<div class="stim">${esc(s.text)}</div><div class="hint">Press space to continue</div>`;
+    const onKey = (e)=>{ if(e.code==='Space'){ document.removeEventListener('keydown',onKey); cleanup(); runSequence(seq,i+1,onDone); } };
+    document.addEventListener('keydown', onKey);
+  } else if(s.type==='stimulus'){
+    overlay.innerHTML = `<div class="stim">${esc(s.text)}</div>`;
+    setTimeout(()=>{ cleanup(); runSequence(seq,i+1,onDone); }, s.duration||1000);
+  } else if(s.type==='wait'){
+    overlay.innerHTML = '';
+    setTimeout(()=>{ cleanup(); runSequence(seq,i+1,onDone); }, s.duration||500);
+  } else if(s.type==='response'){
+    overlay.innerHTML = `<div class="stim">${esc(s.prompt)}</div>`;
+    const allowed = (s.keys||'').split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
+    const t0 = performance.now();
+    let done = false;
+    const finish = (key, rt)=>{
+      if(done) return; done = true;
+      results.push({index:i+1, type:'response', label:s.prompt, key: key||'(timeout)', rt_ms: rt==null?'':Math.round(rt)});
+      document.removeEventListener('keydown', onKey);
+      cleanup(); runSequence(seq,i+1,onDone);
+    };
+    const onKey = (e)=>{
+      const k = (e.code==='Space') ? 'space' : e.key.toLowerCase();
+      if(allowed.length===0 || allowed.includes(k)){ finish(k, performance.now()-t0); }
+    };
+    document.addEventListener('keydown', onKey);
+    if(s.timeout){ setTimeout(()=>finish(null,null), s.timeout); }
+  }
+}
+</script>
+</body>
+</html>
